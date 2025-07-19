@@ -1,0 +1,21 @@
+{
+    "testId": "9f1922a6-01dd-4185-ac19-075aa402f1a3",
+    "name": "SoundSnap",
+    "version": "1.0.0",
+    "manifestVersion": 2,
+    "requirements": {
+        "apps": [
+            {
+                "name": "Express",
+                "apiVersion": 1
+            }
+        ]
+    },
+    "entryPoints": [
+        {
+            "type": "panel",
+            "id": "panel1",
+            "main": "index.html"
+        }
+    ]
+}
