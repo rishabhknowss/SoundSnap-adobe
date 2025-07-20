@@ -19,7 +19,7 @@ app.use(cors({
     const allowedOrigins = [
       'https://localhost:5241',
       'https://new.express.adobe.com',
-      'https://w513kh8ki.wxp.adobe-addons.com',
+      'https://w0n4g6khi.wxp.adobe-addons.com/',
     ];
     if (!origin || allowedOrigins.includes(origin) || /^https:\/\/[a-z0-9-]+\.wxp\.adobe-addons\.com$/.test(origin)) {
       callback(null, true);
