@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const multer = require('multer');
 const fal = require('@fal-ai/serverless-client');
+const { getVideoDurationInSeconds } = require('get-video-duration');
 
 // Load environment variables
 dotenv.config();
@@ -41,35 +42,66 @@ fal.config({
 
 // Health check
 app.get('/health', (req, res) => {
-  console.log('Health check requested');
-  res.status(200).json({ status: 'OK' });
+  console.log('Health check requested:', {
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    falApiKey: process.env.FAL_API_KEY ? 'Set' : 'Missing',
+  });
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 // Upload video to Fal AI storage
 app.post('/api/upload-video', upload.single('video'), async (req, res) => {
   try {
     if (!req.file) {
-      console.error('Invalid request: No video file provided');
+      console.error('Invalid request: No video file provided', {
+        timestamp: new Date().toISOString(),
+      });
       return res.status(400).json({ error: 'No video file provided' });
+    }
+
+    if (!['video/mp4', 'video/quicktime', 'video/webm'].includes(req.file.mimetype)) {
+      console.error('Invalid video format:', {
+        mimetype: req.file.mimetype,
+        timestamp: new Date().toISOString(),
+      });
+      return res.status(400).json({ error: 'Unsupported video format. Use MP4, MOV, or WebM.' });
+    }
+
+    // Validate video duration (max 60 seconds for fal-ai/thinksound)
+    const duration = await getVideoDurationInSeconds(req.file.buffer);
+    if (duration > 60) {
+      console.error('Video duration too long:', {
+        duration,
+        maxAllowed: 60,
+        timestamp: new Date().toISOString(),
+      });
+      return res.status(400).json({ error: 'Video duration exceeds 60 seconds.' });
     }
 
     console.log('Uploading video:', {
       filename: req.file.originalname,
       size: req.file.size,
       mimetype: req.file.mimetype,
+      duration,
+      timestamp: new Date().toISOString(),
     });
 
     const uploadedVideoUrl = await fal.storage.upload(req.file.buffer, {
       file_name: req.file.originalname,
       content_type: req.file.mimetype,
     });
-    console.log('Video uploaded to Fal storage:', uploadedVideoUrl);
+    console.log('Video uploaded to Fal storage:', {
+      url: uploadedVideoUrl,
+      timestamp: new Date().toISOString(),
+    });
 
     res.status(200).json({ videoUrl: uploadedVideoUrl });
   } catch (error) {
     console.error('Error uploading video:', {
       message: error.message,
       stack: error.stack,
+      timestamp: new Date().toISOString(),
     });
     res.status(500).json({ error: error.message || 'Failed to upload video' });
   }
@@ -80,7 +112,9 @@ app.post('/api/generate-audio', async (req, res) => {
   const { videoUrl, prompt } = req.body;
 
   if (!videoUrl) {
-    console.error('Invalid request: Video URL is required');
+    console.error('Invalid request: Video URL is required', {
+      timestamp: new Date().toISOString(),
+    });
     return res.status(400).json({ error: 'Video URL is required' });
   }
 
@@ -88,18 +122,41 @@ app.post('/api/generate-audio', async (req, res) => {
     const requestPayload = {
       video_url: videoUrl,
       prompt: prompt || 'Generate ambient background sound that fits the video\'s content',
+      num_inference_steps: 24, // Default from ThinkSound docs
+      cfg_scale: 5, // Default from ThinkSound docs
+      seed: Math.floor(Math.random() * 1000000), // Random seed for consistency
     };
     console.log('Submitting audio generation request to Fal AI:', {
       videoUrl,
       prompt: prompt ? prompt.substring(0, 50) + '...' : 'Default',
+      num_inference_steps: requestPayload.num_inference_steps,
+      cfg_scale: requestPayload.cfg_scale,
+      seed: requestPayload.seed,
       apiKey: process.env.FAL_API_KEY ? 'Set' : 'Missing',
+      environment: process.env.NODE_ENV || 'development',
+      timestamp: new Date().toISOString(),
     });
+
+    const retry = async (fn, retries = 3, delay = 1000) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          return await fn();
+        } catch (err) {
+          if (i === retries - 1) throw err;
+          console.log(`Retry ${i + 1}/${retries} failed:`, {
+            message: err.message,
+            timestamp: new Date().toISOString(),
+          });
+          await new Promise(res => setTimeout(res, delay));
+        }
+      }
+    };
 
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Audio generation timed out after 60 seconds')), 60000);
+      setTimeout(() => reject(new Error('Audio generation timed out after 180 seconds')), 180000);
     });
 
-    const falPromise = fal.subscribe('fal-ai/thinksound', {
+    const falPromise = retry(() => fal.subscribe('fal-ai/thinksound', {
       input: requestPayload,
       logs: true,
       onQueueUpdate: (update) => {
@@ -107,9 +164,10 @@ app.post('/api/generate-audio', async (req, res) => {
           status: update.status,
           logs: update.logs?.map(log => log.message) || [],
           requestId: update.requestId,
+          timestamp: new Date().toISOString(),
         });
       },
-    });
+    }));
 
     const result = await Promise.race([falPromise, timeoutPromise]);
     console.log('Fal AI full response:', {
@@ -117,14 +175,25 @@ app.post('/api/generate-audio', async (req, res) => {
       data: result.data,
       status: result.status,
       logs: result.logs?.map(log => log.message) || [],
+      timestamp: new Date().toISOString(),
     });
 
     if (!result.data || !result.data.video || !result.data.video.url) {
-      console.error('Invalid response structure from Fal AI:', result);
+      console.error('Invalid response structure from Fal AI:', {
+        result,
+        timestamp: new Date().toISOString(),
+      });
       throw new Error('No video with audio generated or video URL not found');
     }
 
-    console.log('Audio generated successfully:', result.data.video.url);
+    console.log('Audio generated successfully:', {
+      url: result.data.video.url,
+      content_type: result.data.video.content_type,
+      file_name: result.data.video.file_name,
+      file_size: result.data.video.file_size,
+      prompt: result.data.prompt,
+      timestamp: new Date().toISOString(),
+    });
     res.status(200).json({ generatedVideoUrl: result.data.video.url });
   } catch (error) {
     console.error('Error generating audio:', {
@@ -133,6 +202,7 @@ app.post('/api/generate-audio', async (req, res) => {
       response: error.response ? error.response.data : null,
       videoUrl,
       prompt: prompt ? prompt.substring(0, 50) + '...' : 'Default',
+      timestamp: new Date().toISOString(),
     });
     res.status(500).json({ 
       error: error.message || 'Failed to generate audio',
@@ -144,5 +214,8 @@ app.post('/api/generate-audio', async (req, res) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`, {
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+  });
 });
