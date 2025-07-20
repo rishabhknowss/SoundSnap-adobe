@@ -44,7 +44,7 @@ app.get('/health', (req, res) => {
   console.log('Health check requested:', {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    falApiKey: process.env.FAL_API_KEY ? 'Set' : 'Missing',
+    falApi dziecka: process.env.FAL_API_KEY ? 'Set' : 'Missing',
   });
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
@@ -83,12 +83,14 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
       timestamp: new Date().toISOString(),
     });
 
+    const startTime = Date.now();
     const uploadedVideoUrl = await fal.storage.upload(req.file.buffer, {
       file_name: req.file.originalname,
       content_type: req.file.mimetype,
     });
     console.log('Video uploaded to Fal storage:', {
       url: uploadedVideoUrl,
+      durationMs: Date.now() - startTime,
       timestamp: new Date().toISOString(),
     });
 
@@ -135,14 +137,21 @@ app.post('/api/generate-audio', async (req, res) => {
 
     const retry = async (fn, retries = 3, delay = 1000) => {
       for (let i = 0; i < retries; i++) {
+        const startTime = Date.now();
         try {
-          return await fn();
-        } catch (err) {
-          if (i === retries - 1) throw err;
-          console.log(`Retry ${i + 1}/${retries} failed:`, {
-            message: err.message,
+          const result = await fn();
+          console.log(`Retry ${i + 1}/${retries} succeeded:`, {
+            durationMs: Date.now() - startTime,
             timestamp: new Date().toISOString(),
           });
+          return result;
+        } catch (err) {
+          console.log(`Retry ${i + 1}/${retries} failed:`, {
+            message: err.message,
+            durationMs: Date.now() - startTime,
+            timestamp: new Date().toISOString(),
+          });
+          if (i === retries - 1) throw err;
           await new Promise(res => setTimeout(res, delay));
         }
       }
@@ -168,29 +177,31 @@ app.post('/api/generate-audio', async (req, res) => {
     const result = await Promise.race([falPromise, timeoutPromise]);
     console.log('Fal AI full response:', {
       requestId: result.requestId,
-      data: result.data,
+      data: result.data || result, // Handle case where result itself is the response
       status: result.status,
       logs: result.logs?.map(log => log.message) || [],
       timestamp: new Date().toISOString(),
     });
 
-    if (!result.data || !result.data.video || !result.data.video.url) {
+    // Check for valid response structure
+    const responseData = result.data || result; // Fallback to result if data is undefined
+    if (!responseData || !responseData.video || !responseData.video.url) {
       console.error('Invalid response structure from Fal AI:', {
-        result,
+        result: responseData,
         timestamp: new Date().toISOString(),
       });
       throw new Error('No video with audio generated or video URL not found');
     }
 
     console.log('Audio generated successfully:', {
-      url: result.data.video.url,
-      content_type: result.data.video.content_type,
-      file_name: result.data.video.file_name,
-      file_size: result.data.video.file_size,
-      prompt: result.data.prompt,
+      url: responseData.video.url,
+      content_type: responseData.video.content_type,
+      file_name: responseData.video.file_name,
+      file_size: responseData.video.file_size,
+      prompt: responseData.prompt,
       timestamp: new Date().toISOString(),
     });
-    res.status(200).json({ generatedVideoUrl: result.data.video.url });
+    res.status(200).json({ generatedVideoUrl: responseData.video.url });
   } catch (error) {
     console.error('Error generating audio:', {
       message: error.message,
