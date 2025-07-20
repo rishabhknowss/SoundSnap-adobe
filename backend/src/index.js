@@ -3,7 +3,6 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const multer = require('multer');
 const fal = require('@fal-ai/serverless-client');
-const { getVideoDurationInSeconds } = require('get-video-duration');
 
 // Load environment variables
 dotenv.config();
@@ -68,22 +67,19 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
       return res.status(400).json({ error: 'Unsupported video format. Use MP4, MOV, or WebM.' });
     }
 
-    // Validate video duration (max 60 seconds for fal-ai/thinksound)
-    const duration = await getVideoDurationInSeconds(req.file.buffer);
-    if (duration > 60) {
-      console.error('Video duration too long:', {
-        duration,
-        maxAllowed: 60,
+    if (req.file.size > 10 * 1024 * 1024) {
+      console.error('Video size too large:', {
+        size: req.file.size,
+        maxAllowed: 10 * 1024 * 1024,
         timestamp: new Date().toISOString(),
       });
-      return res.status(400).json({ error: 'Video duration exceeds 60 seconds.' });
+      return res.status(400).json({ error: 'Video size exceeds 10MB limit' });
     }
 
     console.log('Uploading video:', {
       filename: req.file.originalname,
       size: req.file.size,
       mimetype: req.file.mimetype,
-      duration,
       timestamp: new Date().toISOString(),
     });
 
