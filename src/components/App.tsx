@@ -1,30 +1,22 @@
 "use client"
 
-import React from "react"
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { Theme } from "@swc-react/theme"
 import { Button } from "@swc-react/button"
 import { Textfield } from "@swc-react/textfield"
 import { FieldLabel } from "@swc-react/field-label"
 import { ProgressCircle } from "@swc-react/progress-circle"
-import "./App.css"
-
-// Import Adobe Spectrum Web Components themes and styles
 import "@spectrum-web-components/theme/express/scale-medium.js"
 import "@spectrum-web-components/theme/express/theme-light.js"
-
-// Import the AddOnSDKAPI type
 import type { AddOnSDKAPI } from "https://new.express.adobe.com/static/add-on-sdk/sdk.js"
+import type { Textfield as SpectrumTextfield } from "@spectrum-web-components/textfield"
+import "./App.css"
 
-import { fal } from "@fal-ai/client"
-
-// Define the AppProps interface for the addOnUISdk prop
 interface AppProps {
   addOnUISdk: AddOnSDKAPI
 }
 
-// Default prompt if user doesn't provide one
-const DEFAULT_PROMPT = "Generate ambient background sound that fits the video's content"
+const API_BASE_URL = "http://localhost:3000"
 
 const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const [videoFile, setVideoFile] = useState<File | null>(null)
@@ -34,97 +26,82 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null)
   const [error, setError] = useState("")
   const [progress, setProgress] = useState("")
-
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleVideoChange triggered.")
     const file = event.target.files?.[0]
     if (file) {
-      console.log("Video file selected:", file.name, file.type, file.size, "bytes")
       setVideoFile(file)
       setVideoPreviewUrl(URL.createObjectURL(file))
       setError("")
     } else {
-      console.log("No video file selected.")
       setVideoFile(null)
       setVideoPreviewUrl(null)
     }
   }
 
   const handleGenerateVideoWithAudio = async () => {
-    console.log("handleGenerateVideoWithAudio started.")
     if (!videoFile) {
       setError("Please upload a video file.")
-      console.error("Error: No video file uploaded.")
       return
     }
 
     setIsGenerating(true)
     setError("")
     setGeneratedVideoUrl(null)
-    setProgress("")
+    setProgress("Uploading video...")
 
     try {
-      console.log("Configuring Fal AI client...")
-      fal.config({
-        credentials: "14d488be-3ef3-440f-8a81-ad333dec502a:9bc05c0382b987cf79242ab1ac38c8a3",
+      // Upload video to backend
+      const formData = new FormData()
+      formData.append("video", videoFile)
+      const uploadResponse = await fetch(`${API_BASE_URL}/api/upload-video`, {
+        method: "POST",
+        body: formData,
       })
-      console.log("Fal AI client configured.")
 
-      const audioPrompt = prompt.trim() || DEFAULT_PROMPT
-      console.log("Using audio prompt:", audioPrompt)
-
-      setProgress("Uploading video...")
-      console.log("Attempting to upload video to Fal storage...")
-      const uploadedVideoUrl = await fal.storage.upload(videoFile)
-      console.log("Video uploaded to Fal storage. URL:", uploadedVideoUrl)
-
-      setProgress("Generating audio for video...")
-      console.log("Calling fal-ai/thinksound API...")
-      const result = await fal.subscribe("fal-ai/thinksound", {
-        input: {
-          video_url: uploadedVideoUrl,
-          prompt: audioPrompt,
-        },
-        logs: true,
-        onQueueUpdate: (update) => {
-          console.log("Fal AI Queue Update:", update.status)
-          if (update.status === "IN_PROGRESS") {
-            const latestLog = update.logs[update.logs.length - 1]?.message || "Processing..."
-            setProgress(latestLog)
-          } else if (update.status === "COMPLETED") {
-            setProgress("Generation complete!")
-          }
-        },
-      })
-      console.log("Fal AI subscription completed. Result:", result)
-
-      if (!result.data || !result.data.video || !result.data.video.url) {
-        throw new Error("No video with audio generated or video URL not found in response.")
+      if (!uploadResponse.ok) {
+        throw new Error(`Video upload failed: ${uploadResponse.statusText}`)
       }
 
-      setGeneratedVideoUrl(result.data.video.url)
+      const uploadResult = await uploadResponse.json()
+      if (!uploadResult.videoUrl) {
+        throw new Error("No video URL returned from upload")
+      }
+
+      setProgress("Generating audio for video...")
+      const generateResponse = await fetch(`${API_BASE_URL}/api/generate-audio`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoUrl: uploadResult.videoUrl,
+          prompt: prompt.trim() || "Generate ambient background sound that fits the video's content",
+        }),
+      })
+
+      if (!generateResponse.ok) {
+        throw new Error(`Audio generation failed: ${generateResponse.statusText}`)
+      }
+
+      const generateResult = await generateResponse.json()
+      if (!generateResult.generatedVideoUrl) {
+        throw new Error("No generated video URL returned")
+      }
+
+      setGeneratedVideoUrl(generateResult.generatedVideoUrl)
       setProgress("Video with audio generated successfully!")
-      console.log("Generated video URL:", result.data.video.url)
     } catch (err) {
-      console.error("Caught error during video generation:", err)
       setError(err instanceof Error ? err.message : "Failed to generate video with audio.")
       setProgress("")
     } finally {
       setIsGenerating(false)
-      console.log("Generation process finished. isGenerating set to false.")
       if (!error) {
-        setTimeout(() => {
-          setProgress("")
-          console.log("Progress message cleared after 3 seconds.")
-        }, 3000)
+        setTimeout(() => setProgress(""), 3000)
       }
     }
   }
 
   const handleReset = () => {
-    console.log("Reset button clicked. Resetting all states.")
     setVideoFile(null)
     setVideoPreviewUrl(null)
     setPrompt("")
@@ -134,43 +111,32 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
     setProgress("")
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
-      console.log("File input cleared.")
     }
   }
 
   const addToCanvas = async () => {
-    console.log("Add to Canvas button clicked.")
-    if (!generatedVideoUrl) {
-      console.log("No generated video URL to add to canvas.")
-      return
-    }
+    if (!generatedVideoUrl) return
+
     try {
       setProgress("Adding to canvas...")
-      console.log("Fetching video blob for canvas import from:", generatedVideoUrl)
       const response = await fetch(generatedVideoUrl)
       let blob = await response.blob()
-      console.log("Video blob fetched. Size:", blob.size, "bytes, Type:", blob.type)
 
       if (blob.type === "application/octet-stream") {
-        console.log("Incorrect MIME type detected. Setting to video/mp4.")
         blob = new Blob([blob], { type: "video/mp4" })
       }
 
       if (typeof addOnUISdk.app.document.addVideo === "function") {
-        console.log("Using addVideo method to add video to canvas.")
         await addOnUISdk.app.document.addVideo(blob)
         setProgress("Video added to canvas successfully!")
       } else {
-        console.log("addVideo method not available. Attempting to extract a frame as fallback.")
         const videoFrameBlob = await extractVideoFrame(blob)
         await addOnUISdk.app.document.addImage(videoFrameBlob)
         setProgress("Video frame added to canvas as an image.")
       }
 
-      console.log("Content added to canvas successfully.")
       setTimeout(() => setProgress(""), 2000)
     } catch (error) {
-      console.error("Error adding content to canvas:", error)
       setError("Failed to add content to canvas: " + (error instanceof Error ? error.message : "Unknown error"))
     }
   }
@@ -223,7 +189,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
             <div className="control">
               <Button
                 size="m"
-                variant="black" // Changed to accent to match Add to Canvas button color
+                variant="primary"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isGenerating}
               >
@@ -260,8 +226,8 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
               <FieldLabel>Describe the desired audio</FieldLabel>
               <Textfield
                 value={prompt}
-                onInput={(e: any) => setPrompt(e.target.value)}
-                placeholder={DEFAULT_PROMPT}
+                onInput={(e: React.FormEvent<SpectrumTextfield>) => setPrompt((e.target as SpectrumTextfield).value)}
+                placeholder="Generate ambient background sound that fits the video's content"
                 disabled={isGenerating}
                 rows={2}
                 className="textfield"
@@ -275,7 +241,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
               {isGenerating && (
                 <div className="progress-section">
                   <ProgressCircle indeterminate size="s" />
-                  <p className="progress-text">{progress || "Generating audio..."}</p>
+                  <p className="progress-text">{progress || "Generating audio..."}</p> 
                 </div>
               )}
               {error && (
