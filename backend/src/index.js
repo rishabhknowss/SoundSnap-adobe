@@ -44,7 +44,7 @@ app.get('/health', (req, res) => {
   console.log('Health check requested:', {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    falApi dziecka: process.env.FAL_API_KEY ? 'Set' : 'Missing',
+    falApi: process.env.FAL_API_KEY ? 'Set' : 'Missing',
   });
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
