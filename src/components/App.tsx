@@ -16,7 +16,7 @@ interface AppProps {
   addOnUISdk: AddOnSDKAPI
 }
 
-const API_BASE_URL = "http://localhost:3000"
+const API_BASE_URL = "https://soundsnap-adobe.onrender.com"
 
 const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const [videoFile, setVideoFile] = useState<File | null>(null)
