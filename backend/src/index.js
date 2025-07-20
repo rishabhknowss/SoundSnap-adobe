@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const multer = require('multer');
-const { fal } = require('@fal-ai/client');
+const fal = require('@fal-ai/serverless-client');
 
 // Load environment variables
 dotenv.config();
@@ -19,7 +19,7 @@ app.use(cors({
     const allowedOrigins = [
       'https://localhost:5241',
       'https://new.express.adobe.com',
-      'https://w0n4g6khi.wxp.adobe-addons.com/',
+      'https://w0n4g6khi.wxp.adobe-addons.com',
     ];
     if (!origin || allowedOrigins.includes(origin) || /^https:\/\/[a-z0-9-]+\.wxp\.adobe-addons\.com$/.test(origin)) {
       callback(null, true);
