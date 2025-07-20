@@ -19,6 +19,7 @@ app.use(cors({
     const allowedOrigins = [
       'https://localhost:5241',
       'https://new.express.adobe.com',
+      'https://w513kh8ki.wxp.adobe-addons.com',
       'https://w0n4g6khi.wxp.adobe-addons.com',
     ];
     if (!origin || allowedOrigins.includes(origin) || /^https:\/\/[a-z0-9-]+\.wxp\.adobe-addons\.com$/.test(origin)) {
@@ -40,6 +41,7 @@ fal.config({
 
 // Health check
 app.get('/health', (req, res) => {
+  console.log('Health check requested');
   res.status(200).json({ status: 'OK' });
 });
 
@@ -47,10 +49,16 @@ app.get('/health', (req, res) => {
 app.post('/api/upload-video', upload.single('video'), async (req, res) => {
   try {
     if (!req.file) {
+      console.error('Invalid request: No video file provided');
       return res.status(400).json({ error: 'No video file provided' });
     }
 
-    console.log('Uploading video:', req.file.originalname, req.file.size, 'bytes');
+    console.log('Uploading video:', {
+      filename: req.file.originalname,
+      size: req.file.size,
+      mimetype: req.file.mimetype,
+    });
+
     const uploadedVideoUrl = await fal.storage.upload(req.file.buffer, {
       file_name: req.file.originalname,
       content_type: req.file.mimetype,
@@ -59,7 +67,10 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
 
     res.status(200).json({ videoUrl: uploadedVideoUrl });
   } catch (error) {
-    console.error('Error uploading video:', error);
+    console.error('Error uploading video:', {
+      message: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({ error: error.message || 'Failed to upload video' });
   }
 });
@@ -69,28 +80,64 @@ app.post('/api/generate-audio', async (req, res) => {
   const { videoUrl, prompt } = req.body;
 
   if (!videoUrl) {
+    console.error('Invalid request: Video URL is required');
     return res.status(400).json({ error: 'Video URL is required' });
   }
 
   try {
-    console.log('Generating audio for video:', videoUrl);
-    const result = await fal.subscribe('fal-ai/thinksound', {
-      input: {
-        video_url: videoUrl,
-        prompt: prompt || 'Generate ambient background sound that fits the video\'s content',
-      },
+    const requestPayload = {
+      video_url: videoUrl,
+      prompt: prompt || 'Generate ambient background sound that fits the video\'s content',
+    };
+    console.log('Submitting audio generation request to Fal AI:', {
+      videoUrl,
+      prompt: prompt ? prompt.substring(0, 50) + '...' : 'Default',
+      apiKey: process.env.FAL_API_KEY ? 'Set' : 'Missing',
+    });
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Audio generation timed out after 60 seconds')), 60000);
+    });
+
+    const falPromise = fal.subscribe('fal-ai/thinksound', {
+      input: requestPayload,
       logs: true,
+      onQueueUpdate: (update) => {
+        console.log('Fal AI queue update:', {
+          status: update.status,
+          logs: update.logs?.map(log => log.message) || [],
+          requestId: update.requestId,
+        });
+      },
+    });
+
+    const result = await Promise.race([falPromise, timeoutPromise]);
+    console.log('Fal AI full response:', {
+      requestId: result.requestId,
+      data: result.data,
+      status: result.status,
+      logs: result.logs?.map(log => log.message) || [],
     });
 
     if (!result.data || !result.data.video || !result.data.video.url) {
+      console.error('Invalid response structure from Fal AI:', result);
       throw new Error('No video with audio generated or video URL not found');
     }
 
     console.log('Audio generated successfully:', result.data.video.url);
     res.status(200).json({ generatedVideoUrl: result.data.video.url });
   } catch (error) {
-    console.error('Error generating audio:', error);
-    res.status(500).json({ error: error.message || 'Failed to generate audio' });
+    console.error('Error generating audio:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response ? error.response.data : null,
+      videoUrl,
+      prompt: prompt ? prompt.substring(0, 50) + '...' : 'Default',
+    });
+    res.status(500).json({ 
+      error: error.message || 'Failed to generate audio',
+      details: error.response ? error.response.data : null 
+    });
   }
 });
 
