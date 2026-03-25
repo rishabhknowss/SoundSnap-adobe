@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String    @id @default(uuid()) @db.Uuid
+  email               String    @unique
+  name                String?
+  avatarUrl           String?   @map("avatar_url")
+  googleId            String?   @unique @map("google_id")
+  adobeId             String?   @unique @map("adobe_id")
+  activationKey       String?   @unique @map("activation_key")
+  passwordHash        String?   @map("password_hash")
+  emailVerified       Boolean   @default(false) @map("email_verified")
+  verificationToken   String?   @map("verification_token")
+  verificationExpires DateTime? @map("verification_expires")
+  credits             Int       @default(0)
+  dodoCustId          String?   @map("dodo_customer_id")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  transactions Transaction[]
+  usageLogs    UsageLog[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  type          String
+  creditsAmount Int      @map("credits_amount")
+  paymentId     String?  @unique @map("payment_id")
+  amountPaid    Int?     @map("amount_paid")
+  currency      String   @default("USD")
+  status        String   @default("completed")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
+model UsageLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  creditsUsed    Int      @default(0) @map("credits_used")
+  computeSeconds Float?   @map("compute_seconds")
+  costUsd        Float?   @map("cost_usd")
+  sourceType     String?  @map("source_type")
+  videoUrl       String?  @map("video_url")
+  outputUrl      String?  @map("output_url")
+  prompt         String?
+  status         String
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("usage_logs")
+}

@@ -1,5 +1,5 @@
 {
-    "name": "videofy-tsx",
+    "name": "soundsnap-adobe",
     "version": "1.0.0",
     "description": "Adobe Creative Cloud Web Add-on.",
     "scripts": {
@@ -15,7 +15,6 @@
         "panel"
     ],
     "dependencies": {
-        "@fal-ai/client": "^1.6.0",
         "@spectrum-web-components/theme": "^1.7.0",
         "@swc-react/button": "^1.0.3",
         "@swc-react/field-label": "^1.7.0",

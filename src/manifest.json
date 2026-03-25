@@ -1,7 +1,7 @@
 {
     "testId": "9f1922a6-01dd-4185-ac19-075aa402f1a3",
     "name": "SoundSnap",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "manifestVersion": 2,
     "requirements": {
         "apps": [
@@ -15,7 +15,10 @@
         {
             "type": "panel",
             "id": "panel1",
-            "main": "index.html"
+            "main": "index.html",
+            "permissions": {
+                "sandbox": ["allow-popups", "allow-popups-to-escape-sandbox", "allow-downloads"]
+            }
         }
     ]
 }
