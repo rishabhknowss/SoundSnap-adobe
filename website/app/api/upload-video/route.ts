@@ -5,6 +5,18 @@ export { OPTIONS } from "@/lib/cors";
 
 fal.config({ credentials: process.env.FAL_API_KEY! });
 
+// GET: Return fal credentials for direct client-side upload
+export async function GET(req: NextRequest) {
+  const user = await getAuthUser(req.headers);
+  if (!user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+
+  return NextResponse.json({
+    falKey: process.env.FAL_API_KEY,
+    uploadUrl: "https://fal.run/fal-ai/fal-storage/upload",
+  });
+}
+
+// POST: Upload video through backend (for small files < 4MB)
 export async function POST(req: NextRequest) {
   const user = await getAuthUser(req.headers);
   if (!user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
@@ -17,20 +29,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No video file provided" }, { status: 400 });
     }
 
-    // Validate file type
     const validTypes = ["video/mp4", "video/quicktime", "video/webm"];
     if (!validTypes.includes(file.type)) {
       return NextResponse.json({ error: "Invalid file type. Supported: MP4, MOV, WebM" }, { status: 400 });
     }
 
-    // Validate file size (50MB max)
     if (file.size > 50 * 1024 * 1024) {
       return NextResponse.json({ error: "File too large. Max 50MB." }, { status: 400 });
     }
 
     console.log("Uploading video to Fal storage...", file.name, file.size);
 
-    // Upload to Fal storage with retry
     let videoUrl: string;
     try {
       videoUrl = await fal.storage.upload(file);
@@ -40,7 +49,6 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("Video uploaded:", videoUrl);
-
     return NextResponse.json({ videoUrl });
   } catch (err: any) {
     console.error("Upload error:", err.message);

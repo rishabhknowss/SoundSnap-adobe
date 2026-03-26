@@ -113,14 +113,36 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
     setIsGenerating(true); setError(""); setGeneratedVideoUrl(null); setAddedToCanvas(false); setShowBuyPrompt(false); setLastCreditsUsed(null)
 
     try {
-      // Step 1: Upload
+      // Step 1: Upload — direct to fal for large files (Vercel has 4.5MB limit)
       setProgress("Uploading video...")
-      const formData = new FormData()
-      formData.append("video", videoFile)
+      let videoUrl: string
 
-      const uploadRes = await apiUpload("/api/upload-video", formData)
-      if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
-      const { videoUrl } = await uploadRes.json()
+      if (videoFile.size > 4 * 1024 * 1024) {
+        // Large file: get fal key, upload directly to fal storage
+        const keyRes = await apiFetch("/api/upload-video")
+        if (!keyRes.ok) throw new Error("Failed to get upload credentials")
+        const { falKey } = await keyRes.json()
+
+        const falForm = new FormData()
+        falForm.append("file", videoFile)
+
+        const falRes = await fetch("https://fal.run/fal-ai/fal-storage/upload", {
+          method: "POST",
+          headers: { "Authorization": `Key ${falKey}` },
+          body: falForm,
+        })
+        if (!falRes.ok) throw new Error("Direct upload failed")
+        const falData = await falRes.json()
+        videoUrl = falData.url || falData.file_url
+      } else {
+        // Small file: upload through backend
+        const formData = new FormData()
+        formData.append("video", videoFile)
+        const uploadRes = await apiUpload("/api/upload-video", formData)
+        if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
+        const data = await uploadRes.json()
+        videoUrl = data.videoUrl
+      }
 
       // Step 2: Submit to queue
       setProgress("Submitting to AI...")
