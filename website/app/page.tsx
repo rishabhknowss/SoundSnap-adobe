@@ -421,7 +421,7 @@ export default function LandingPage() {
       <div className="mx-6 md:mx-10 h-px bg-zinc-200 dark:bg-white/[0.06]" />
       <footer className="px-6 md:px-10 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="soundsnap" className="w-5 h-5 rounded" />
+          <img src="/logo.png" alt="soundsnap" className="w-7 h-7 rounded" />
           <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500">soundsnap.</span>
           <span className="text-zinc-200 dark:text-zinc-700">&middot;</span>
           <Link href="/privacy" className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">Privacy</Link>
