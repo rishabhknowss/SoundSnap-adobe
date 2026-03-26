@@ -114,6 +114,7 @@ export const UsageLogScalarFieldEnum = {
   creditsUsed: 'creditsUsed',
   computeSeconds: 'computeSeconds',
   costUsd: 'costUsd',
+  falRequestId: 'falRequestId',
   sourceType: 'sourceType',
   videoUrl: 'videoUrl',
   outputUrl: 'outputUrl',

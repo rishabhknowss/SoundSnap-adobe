@@ -44,6 +44,7 @@ export type UsageLogMinAggregateOutputType = {
   creditsUsed: number | null
   computeSeconds: number | null
   costUsd: number | null
+  falRequestId: string | null
   sourceType: string | null
   videoUrl: string | null
   outputUrl: string | null
@@ -58,6 +59,7 @@ export type UsageLogMaxAggregateOutputType = {
   creditsUsed: number | null
   computeSeconds: number | null
   costUsd: number | null
+  falRequestId: string | null
   sourceType: string | null
   videoUrl: string | null
   outputUrl: string | null
@@ -72,6 +74,7 @@ export type UsageLogCountAggregateOutputType = {
   creditsUsed: number
   computeSeconds: number
   costUsd: number
+  falRequestId: number
   sourceType: number
   videoUrl: number
   outputUrl: number
@@ -100,6 +103,7 @@ export type UsageLogMinAggregateInputType = {
   creditsUsed?: true
   computeSeconds?: true
   costUsd?: true
+  falRequestId?: true
   sourceType?: true
   videoUrl?: true
   outputUrl?: true
@@ -114,6 +118,7 @@ export type UsageLogMaxAggregateInputType = {
   creditsUsed?: true
   computeSeconds?: true
   costUsd?: true
+  falRequestId?: true
   sourceType?: true
   videoUrl?: true
   outputUrl?: true
@@ -128,6 +133,7 @@ export type UsageLogCountAggregateInputType = {
   creditsUsed?: true
   computeSeconds?: true
   costUsd?: true
+  falRequestId?: true
   sourceType?: true
   videoUrl?: true
   outputUrl?: true
@@ -229,6 +235,7 @@ export type UsageLogGroupByOutputType = {
   creditsUsed: number
   computeSeconds: number | null
   costUsd: number | null
+  falRequestId: string | null
   sourceType: string | null
   videoUrl: string | null
   outputUrl: string | null
@@ -266,6 +273,7 @@ export type UsageLogWhereInput = {
   creditsUsed?: Prisma.IntFilter<"UsageLog"> | number
   computeSeconds?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
   costUsd?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
+  falRequestId?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   sourceType?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   videoUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   outputUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
@@ -281,6 +289,7 @@ export type UsageLogOrderByWithRelationInput = {
   creditsUsed?: Prisma.SortOrder
   computeSeconds?: Prisma.SortOrderInput | Prisma.SortOrder
   costUsd?: Prisma.SortOrderInput | Prisma.SortOrder
+  falRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
   sourceType?: Prisma.SortOrderInput | Prisma.SortOrder
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   outputUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -299,6 +308,7 @@ export type UsageLogWhereUniqueInput = Prisma.AtLeast<{
   creditsUsed?: Prisma.IntFilter<"UsageLog"> | number
   computeSeconds?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
   costUsd?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
+  falRequestId?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   sourceType?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   videoUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   outputUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
@@ -314,6 +324,7 @@ export type UsageLogOrderByWithAggregationInput = {
   creditsUsed?: Prisma.SortOrder
   computeSeconds?: Prisma.SortOrderInput | Prisma.SortOrder
   costUsd?: Prisma.SortOrderInput | Prisma.SortOrder
+  falRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
   sourceType?: Prisma.SortOrderInput | Prisma.SortOrder
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   outputUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -336,6 +347,7 @@ export type UsageLogScalarWhereWithAggregatesInput = {
   creditsUsed?: Prisma.IntWithAggregatesFilter<"UsageLog"> | number
   computeSeconds?: Prisma.FloatNullableWithAggregatesFilter<"UsageLog"> | number | null
   costUsd?: Prisma.FloatNullableWithAggregatesFilter<"UsageLog"> | number | null
+  falRequestId?: Prisma.StringNullableWithAggregatesFilter<"UsageLog"> | string | null
   sourceType?: Prisma.StringNullableWithAggregatesFilter<"UsageLog"> | string | null
   videoUrl?: Prisma.StringNullableWithAggregatesFilter<"UsageLog"> | string | null
   outputUrl?: Prisma.StringNullableWithAggregatesFilter<"UsageLog"> | string | null
@@ -349,6 +361,7 @@ export type UsageLogCreateInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -364,6 +377,7 @@ export type UsageLogUncheckedCreateInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -377,6 +391,7 @@ export type UsageLogUpdateInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -392,6 +407,7 @@ export type UsageLogUncheckedUpdateInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -406,6 +422,7 @@ export type UsageLogCreateManyInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -419,6 +436,7 @@ export type UsageLogUpdateManyMutationInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -433,6 +451,7 @@ export type UsageLogUncheckedUpdateManyInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -457,6 +476,7 @@ export type UsageLogCountOrderByAggregateInput = {
   creditsUsed?: Prisma.SortOrder
   computeSeconds?: Prisma.SortOrder
   costUsd?: Prisma.SortOrder
+  falRequestId?: Prisma.SortOrder
   sourceType?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   outputUrl?: Prisma.SortOrder
@@ -477,6 +497,7 @@ export type UsageLogMaxOrderByAggregateInput = {
   creditsUsed?: Prisma.SortOrder
   computeSeconds?: Prisma.SortOrder
   costUsd?: Prisma.SortOrder
+  falRequestId?: Prisma.SortOrder
   sourceType?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   outputUrl?: Prisma.SortOrder
@@ -491,6 +512,7 @@ export type UsageLogMinOrderByAggregateInput = {
   creditsUsed?: Prisma.SortOrder
   computeSeconds?: Prisma.SortOrder
   costUsd?: Prisma.SortOrder
+  falRequestId?: Prisma.SortOrder
   sourceType?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   outputUrl?: Prisma.SortOrder
@@ -560,6 +582,7 @@ export type UsageLogCreateWithoutUserInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -573,6 +596,7 @@ export type UsageLogUncheckedCreateWithoutUserInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -616,6 +640,7 @@ export type UsageLogScalarWhereInput = {
   creditsUsed?: Prisma.IntFilter<"UsageLog"> | number
   computeSeconds?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
   costUsd?: Prisma.FloatNullableFilter<"UsageLog"> | number | null
+  falRequestId?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   sourceType?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   videoUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
   outputUrl?: Prisma.StringNullableFilter<"UsageLog"> | string | null
@@ -629,6 +654,7 @@ export type UsageLogCreateManyUserInput = {
   creditsUsed?: number
   computeSeconds?: number | null
   costUsd?: number | null
+  falRequestId?: string | null
   sourceType?: string | null
   videoUrl?: string | null
   outputUrl?: string | null
@@ -642,6 +668,7 @@ export type UsageLogUpdateWithoutUserInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -655,6 +682,7 @@ export type UsageLogUncheckedUpdateWithoutUserInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -668,6 +696,7 @@ export type UsageLogUncheckedUpdateManyWithoutUserInput = {
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
   computeSeconds?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costUsd?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  falRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outputUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -684,6 +713,7 @@ export type UsageLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   creditsUsed?: boolean
   computeSeconds?: boolean
   costUsd?: boolean
+  falRequestId?: boolean
   sourceType?: boolean
   videoUrl?: boolean
   outputUrl?: boolean
@@ -699,6 +729,7 @@ export type UsageLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   creditsUsed?: boolean
   computeSeconds?: boolean
   costUsd?: boolean
+  falRequestId?: boolean
   sourceType?: boolean
   videoUrl?: boolean
   outputUrl?: boolean
@@ -714,6 +745,7 @@ export type UsageLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   creditsUsed?: boolean
   computeSeconds?: boolean
   costUsd?: boolean
+  falRequestId?: boolean
   sourceType?: boolean
   videoUrl?: boolean
   outputUrl?: boolean
@@ -729,6 +761,7 @@ export type UsageLogSelectScalar = {
   creditsUsed?: boolean
   computeSeconds?: boolean
   costUsd?: boolean
+  falRequestId?: boolean
   sourceType?: boolean
   videoUrl?: boolean
   outputUrl?: boolean
@@ -737,7 +770,7 @@ export type UsageLogSelectScalar = {
   createdAt?: boolean
 }
 
-export type UsageLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "creditsUsed" | "computeSeconds" | "costUsd" | "sourceType" | "videoUrl" | "outputUrl" | "prompt" | "status" | "createdAt", ExtArgs["result"]["usageLog"]>
+export type UsageLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "creditsUsed" | "computeSeconds" | "costUsd" | "falRequestId" | "sourceType" | "videoUrl" | "outputUrl" | "prompt" | "status" | "createdAt", ExtArgs["result"]["usageLog"]>
 export type UsageLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -759,6 +792,7 @@ export type $UsageLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     creditsUsed: number
     computeSeconds: number | null
     costUsd: number | null
+    falRequestId: string | null
     sourceType: string | null
     videoUrl: string | null
     outputUrl: string | null
@@ -1194,6 +1228,7 @@ export interface UsageLogFieldRefs {
   readonly creditsUsed: Prisma.FieldRef<"UsageLog", 'Int'>
   readonly computeSeconds: Prisma.FieldRef<"UsageLog", 'Float'>
   readonly costUsd: Prisma.FieldRef<"UsageLog", 'Float'>
+  readonly falRequestId: Prisma.FieldRef<"UsageLog", 'String'>
   readonly sourceType: Prisma.FieldRef<"UsageLog", 'String'>
   readonly videoUrl: Prisma.FieldRef<"UsageLog", 'String'>
   readonly outputUrl: Prisma.FieldRef<"UsageLog", 'String'>

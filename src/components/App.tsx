@@ -113,6 +113,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
     setIsGenerating(true); setError(""); setGeneratedVideoUrl(null); setAddedToCanvas(false); setShowBuyPrompt(false); setLastCreditsUsed(null)
 
     try {
+      // Step 1: Upload
       setProgress("Uploading video...")
       const formData = new FormData()
       formData.append("video", videoFile)
@@ -121,7 +122,8 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
       if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
       const { videoUrl } = await uploadRes.json()
 
-      setProgress("Generating audio — this may take 1–2 minutes...")
+      // Step 2: Submit to queue
+      setProgress("Submitting to AI...")
       const res = await apiFetch("/api/generate-audio", {
         method: "POST",
         body: JSON.stringify({
@@ -129,17 +131,56 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
           videoDuration: videoDuration || undefined,
           prompt: prompt.trim() || "Generate ambient background sound that fits the video's content",
         }),
-        signal: controller.signal,
       })
 
-      if (res.status === 402) { setShowBuyPrompt(true); return }
+      if (res.status === 402) { setShowBuyPrompt(true); setIsGenerating(false); return }
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Generation failed") }
 
-      const result = await res.json()
-      setGeneratedVideoUrl(result.generatedVideoUrl)
-      setLastCreditsUsed(result.creditsUsed || null)
-      refreshCredits()
-      setProgress("")
+      const { jobId } = await res.json()
+
+      // Step 3: Poll for result (up to 5 minutes)
+      setProgress("Generating audio — this may take 3–5 minutes...")
+      const maxAttempts = 100 // 100 * 3s = 5 min
+      let attempts = 0
+
+      while (attempts < maxAttempts) {
+        if (abortRef.current?.signal.aborted) return
+
+        await new Promise(r => setTimeout(r, 3000))
+        attempts++
+
+        try {
+          const statusRes = await apiFetch(`/api/generate-audio/status?jobId=${jobId}`)
+          if (!statusRes.ok) continue
+
+          const data = await statusRes.json()
+
+          if (data.status === "queued") {
+            setProgress(`Waiting in queue... (${attempts * 3}s)`)
+            continue
+          }
+          if (data.status === "processing") {
+            setProgress(`Generating audio... (${attempts * 3}s)`)
+            continue
+          }
+          if (data.status === "success") {
+            setGeneratedVideoUrl(data.generatedVideoUrl)
+            setLastCreditsUsed(data.creditsUsed || null)
+            refreshCredits()
+            setProgress("")
+            setIsGenerating(false)
+            return
+          }
+          if (data.status === "failed") {
+            throw new Error(data.error || "Generation failed")
+          }
+        } catch (pollErr) {
+          // Network error during poll — keep trying
+          console.log("Poll error, retrying...", pollErr)
+        }
+      }
+
+      throw new Error("Generation timed out. Please try again.")
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return
       setError(err instanceof Error ? err.message : "Failed to generate"); setProgress("")
@@ -308,7 +349,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
                 <ProgressCircle indeterminate size="m" label="Generating" />
                 <div className="generating-info">
                   <p className="generating-title">{progress || "Generating..."}</p>
-                  <p className="generating-desc">This may take 1–2 minutes depending on video length</p>
+                  <p className="generating-desc">This may take 3–5 minutes depending on queue</p>
                 </div>
                 <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
               </div>

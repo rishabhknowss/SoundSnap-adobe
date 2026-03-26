@@ -52,6 +52,7 @@ model UsageLog {
   creditsUsed    Int      @default(0) @map("credits_used")
   computeSeconds Float?   @map("compute_seconds")
   costUsd        Float?   @map("cost_usd")
+  falRequestId   String?  @map("fal_request_id")
   sourceType     String?  @map("source_type")
   videoUrl       String?  @map("video_url")
   outputUrl      String?  @map("output_url")
