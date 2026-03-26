@@ -1,6 +1,6 @@
 import { getToken, clearAuth } from './storage';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://www.soundsnap.live';
 
 export class AuthError extends Error {
   constructor() {

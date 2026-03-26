@@ -16,7 +16,7 @@ import { apiFetch, apiUpload } from "../utils/api"
 
 interface AppProps { addOnUISdk: AddOnSDKAPI }
 
-const WEBSITE_URL = "http://localhost:3000"
+const WEBSITE_URL = "https://www.soundsnap.live"
 
 const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const { status, user, credits, error: authError, activate, refreshCredits, disconnect } = useAddonAuth(addOnUISdk)
