@@ -71,7 +71,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      if (file.size > 50 * 1024 * 1024) { setError("File too large. Max 50MB."); return }
+      if (file.size > 4 * 1024 * 1024) { setError("File too large. Max 4MB. Compress your video or use a shorter clip."); return }
       setVideoFile(file)
       const url = URL.createObjectURL(file)
       setVideoPreviewUrl(url)
@@ -113,36 +113,15 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
     setIsGenerating(true); setError(""); setGeneratedVideoUrl(null); setAddedToCanvas(false); setShowBuyPrompt(false); setLastCreditsUsed(null)
 
     try {
-      // Step 1: Upload — direct to fal for large files (Vercel has 4.5MB limit)
+      // Step 1: Upload video to fal via backend
       setProgress("Uploading video...")
-      let videoUrl: string
+      if (videoFile.size > 4 * 1024 * 1024) { throw new Error("File too large. Max 4MB on current plan. Compress your video or use a shorter clip.") }
 
-      if (videoFile.size > 4 * 1024 * 1024) {
-        // Large file: get fal key, upload directly to fal storage
-        const keyRes = await apiFetch("/api/upload-video")
-        if (!keyRes.ok) throw new Error("Failed to get upload credentials")
-        const { falKey } = await keyRes.json()
-
-        const falForm = new FormData()
-        falForm.append("file", videoFile)
-
-        const falRes = await fetch("https://fal.run/fal-ai/fal-storage/upload", {
-          method: "POST",
-          headers: { "Authorization": `Key ${falKey}` },
-          body: falForm,
-        })
-        if (!falRes.ok) throw new Error("Direct upload failed")
-        const falData = await falRes.json()
-        videoUrl = falData.url || falData.file_url
-      } else {
-        // Small file: upload through backend
-        const formData = new FormData()
-        formData.append("video", videoFile)
-        const uploadRes = await apiUpload("/api/upload-video", formData)
-        if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
-        const data = await uploadRes.json()
-        videoUrl = data.videoUrl
-      }
+      const formData = new FormData()
+      formData.append("video", videoFile)
+      const uploadRes = await apiUpload("/api/upload-video", formData)
+      if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
+      const { videoUrl } = await uploadRes.json()
 
       // Step 2: Submit to queue
       setProgress("Submitting to AI...")
@@ -337,7 +316,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
                   <div className="upload-placeholder">
                     <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
                     <span>Click to upload video</span>
-                    <span className="upload-formats">MP4, MOV, WebM (max 50MB)</span>
+                    <span className="upload-formats">MP4, MOV, WebM (max 4MB)</span>
                   </div>
                 )}
               </div>

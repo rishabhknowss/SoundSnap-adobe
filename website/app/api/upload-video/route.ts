@@ -5,18 +5,6 @@ export { OPTIONS } from "@/lib/cors";
 
 fal.config({ credentials: process.env.FAL_API_KEY! });
 
-// GET: Return fal credentials for direct client-side upload
-export async function GET(req: NextRequest) {
-  const user = await getAuthUser(req.headers);
-  if (!user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
-
-  return NextResponse.json({
-    falKey: process.env.FAL_API_KEY,
-    uploadUrl: "https://fal.run/fal-ai/fal-storage/upload",
-  });
-}
-
-// POST: Upload video through backend (for small files < 4MB)
 export async function POST(req: NextRequest) {
   const user = await getAuthUser(req.headers);
   if (!user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
