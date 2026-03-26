@@ -36,7 +36,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
 
   const logout = () => { localStorage.removeItem("soundsnap_token"); router.push("/"); };
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-[#0C0A14]"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-violet-600 animate-pulse" /><p className="text-violet-400/60 text-xs font-medium">Loading...</p></div></div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-[#111]"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-violet-600 animate-pulse" /><p className="text-violet-400/60 text-xs font-medium">Loading...</p></div></div>;
 
   return <DashboardShell user={{ name: user.name, email: user.email, credits: user.credits }} onLogout={logout}>{children}</DashboardShell>;
 }

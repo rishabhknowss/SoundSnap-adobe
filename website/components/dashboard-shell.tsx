@@ -20,9 +20,9 @@ export function DashboardShell({ children, user, onLogout }: Props) {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-[#FAFAF8] dark:bg-[#0C0A14] text-zinc-900 dark:text-zinc-100">
+    <div className="flex h-screen bg-[#FAFAF8] dark:bg-[#111] text-zinc-900 dark:text-zinc-100">
       {/* Sidebar */}
-      <aside className="hidden md:flex w-[220px] flex-col border-r border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0C0A14]">
+      <aside className="hidden md:flex w-[220px] flex-col border-r border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#111]">
         {/* Brand */}
         <div className="h-14 flex items-center px-5">
           <Link href="/" className="font-bold text-sm tracking-tight">soundsnap.</Link>
@@ -78,7 +78,7 @@ export function DashboardShell({ children, user, onLogout }: Props) {
 
       {/* Mobile header */}
       <div className="flex flex-col flex-1 min-w-0">
-        <header className="md:hidden h-12 border-b border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0C0A14] flex items-center justify-between px-4">
+        <header className="md:hidden h-12 border-b border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#111] flex items-center justify-between px-4">
           <Link href="/" className="font-bold text-sm">soundsnap.</Link>
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2 py-1 rounded">{user?.credits ?? 0}</span>

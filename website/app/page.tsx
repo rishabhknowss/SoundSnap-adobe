@@ -153,7 +153,7 @@ function AuthCard() {
 
       <div className="relative mb-4">
         <Separator className="bg-zinc-200 dark:bg-white/8" />
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FAFAF8] dark:bg-[#0C0A14] px-3 text-[10px] text-zinc-400 dark:text-zinc-600 font-medium">or</span>
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FAFAF8] dark:bg-[#111] px-3 text-[10px] text-zinc-400 dark:text-zinc-600 font-medium">or</span>
       </div>
 
       <Tabs defaultValue="login">
@@ -195,7 +195,7 @@ const PACKS = [
 export default function LandingPage() {
   return (
     <Suspense>
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#0C0A14] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#111] text-zinc-900 dark:text-zinc-100">
 
       {/* ── Hero: split layout ── */}
       <section className="min-h-screen flex flex-col lg:flex-row">

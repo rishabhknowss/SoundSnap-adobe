@@ -86,19 +86,19 @@ function OverviewContent() {
 
       {/* Bento stats grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-        <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 relative overflow-hidden">
+        <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-violet-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Credits</p>
           <p className="text-3xl font-extrabold mt-1.5 tracking-tight text-violet-600 dark:text-violet-400">{credits}</p>
           <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-0.5">available</p>
         </div>
-        <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 relative overflow-hidden">
+        <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Generated</p>
           <p className="text-3xl font-extrabold mt-1.5 tracking-tight">{generations.length}</p>
           <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-0.5">audio tracks</p>
         </div>
-        <div className="col-span-2 sm:col-span-1 bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 relative overflow-hidden">
+        <div className="col-span-2 sm:col-span-1 bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Spent</p>
           <p className="text-3xl font-extrabold mt-1.5 tracking-tight">${(totalSpent / 100).toFixed(2)}</p>
@@ -118,7 +118,7 @@ function OverviewContent() {
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 ml-6">Enter this in Adobe Express to connect your account</p>
             </div>
             <div className="flex items-center gap-2">
-              <code className="bg-white dark:bg-[#0C0A14] border-2 border-violet-300/50 dark:border-violet-500/15 px-4 py-2.5 rounded-xl font-mono text-base font-extrabold text-violet-700 dark:text-violet-400 tracking-[0.12em] select-all">
+              <code className="bg-white dark:bg-[#111] border-2 border-violet-300/50 dark:border-violet-500/15 px-4 py-2.5 rounded-xl font-mono text-base font-extrabold text-violet-700 dark:text-violet-400 tracking-[0.12em] select-all">
                 {user.activationKey}
               </code>
               <Button variant="outline" size="sm" onClick={copyKey} className="rounded-xl border-violet-300/50 dark:border-violet-500/15 text-violet-700 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-500/10 h-[44px] px-3.5 shrink-0 font-bold text-xs">
@@ -130,7 +130,7 @@ function OverviewContent() {
       )}
 
       {/* Recent Generations */}
-      <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <p className="font-bold text-sm">Recent Generations</p>
           {generations.length > 0 && (

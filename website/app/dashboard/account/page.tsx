@@ -38,7 +38,7 @@ export default function AccountPage() {
       </div>
 
       {/* Profile */}
-      <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 mb-5">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 mb-5">
         <div className="flex items-center gap-4 mb-5">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-400 to-amber-500 flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-violet-500/15">
             {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
@@ -74,14 +74,14 @@ export default function AccountPage() {
           </div>
           <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-3 ml-6">Use this key to connect the Adobe Express addon to your account</p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 bg-white dark:bg-[#0C0A14] border-2 border-violet-300/50 dark:border-violet-500/15 px-4 py-2.5 rounded-xl font-mono text-base font-extrabold text-violet-700 dark:text-violet-400 text-center tracking-[0.12em] select-all">{user.activationKey}</code>
+            <code className="flex-1 bg-white dark:bg-[#111] border-2 border-violet-300/50 dark:border-violet-500/15 px-4 py-2.5 rounded-xl font-mono text-base font-extrabold text-violet-700 dark:text-violet-400 text-center tracking-[0.12em] select-all">{user.activationKey}</code>
             <Button variant="outline" size="sm" onClick={copyKey} className="rounded-xl border-violet-300/50 dark:border-violet-500/15 text-violet-700 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-500/10 h-[42px] px-3.5 font-bold text-xs">{copied ? "Copied!" : "Copy"}</Button>
           </div>
         </div>
       )}
 
       {/* Setup Instructions */}
-      <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 mb-5">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 mb-5">
         <h2 className="font-bold text-sm mb-4">Setup Instructions</h2>
         <ol className="space-y-3 text-sm text-zinc-500 dark:text-zinc-400">
           {[
@@ -100,7 +100,7 @@ export default function AccountPage() {
 
       {/* Quick Links */}
       <div className="grid sm:grid-cols-2 gap-3 mb-5">
-        <a href="https://new.express.adobe.com/" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 hover:border-violet-300 dark:hover:border-violet-500/20 transition-all group flex items-center gap-4">
+        <a href="https://new.express.adobe.com/" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 hover:border-violet-300 dark:hover:border-violet-500/20 transition-all group flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-100 dark:group-hover:bg-violet-500/15 transition-colors">
             <svg className="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
           </div>
@@ -109,7 +109,7 @@ export default function AccountPage() {
             <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Open Adobe Express</p>
           </div>
         </a>
-        <a href="mailto:support@soundsnap.ai" className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 hover:border-violet-300 dark:hover:border-violet-500/20 transition-all group flex items-center gap-4">
+        <a href="mailto:support@soundsnap.ai" className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 hover:border-violet-300 dark:hover:border-violet-500/20 transition-all group flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-100 dark:group-hover:bg-amber-500/15 transition-colors">
             <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
           </div>

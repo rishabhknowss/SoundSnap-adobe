@@ -86,7 +86,7 @@ export default function CreditsPage() {
             <div key={pack.id} className={`relative rounded-2xl overflow-hidden border-2 transition-all hover:shadow-xl ${
               i === 1
                 ? "border-violet-500 bg-violet-50 dark:bg-violet-500/[0.06] shadow-lg shadow-violet-500/10"
-                : "border-zinc-200 dark:border-white/6 bg-white dark:bg-[#16132A] hover:border-zinc-300 dark:hover:border-violet-500/15"
+                : "border-zinc-200 dark:border-white/6 bg-white dark:bg-[#1a1a1a] hover:border-zinc-300 dark:hover:border-violet-500/15"
             }`}>
               {i === 1 && <div className="bg-gradient-to-r from-violet-500 to-violet-600 text-white text-[10px] font-bold text-center py-1.5 tracking-[0.15em] uppercase">Most Popular</div>}
               <div className="p-7 text-center">
@@ -113,7 +113,7 @@ export default function CreditsPage() {
       </div>
 
       {/* How credits work */}
-      <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5 mb-6">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5 mb-6">
         <h3 className="font-bold text-sm mb-3">How credits work</h3>
         <ul className="space-y-2.5 text-sm text-zinc-500 dark:text-zinc-400">
           <li className="flex items-start gap-2.5"><span className="w-5 h-5 rounded-md bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5"><span className="text-violet-500 text-xs font-bold">1</span></span>1 credit = $0.01 — you only pay for actual compute time</li>
@@ -124,7 +124,7 @@ export default function CreditsPage() {
       </div>
 
       {/* Transaction history */}
-      <div className="bg-white dark:bg-[#16132A] border border-zinc-200/60 dark:border-violet-500/8 rounded-2xl p-5">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-zinc-200/60 dark:border-white/[0.08] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-sm">Transaction History</h3>
           {transactions.length > 0 && (
