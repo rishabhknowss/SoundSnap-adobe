@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import DodoPayments from "dodopayments";
 import { prisma } from "@/lib/prisma";
 
-const dodo = new DodoPayments({
-  bearerToken: process.env.DODO_API_KEY!,
-  environment: (process.env.DODO_ENVIRONMENT as "live_mode" | "test_mode") || "live_mode",
-});
+function getDodo() {
+  return new DodoPayments({
+    bearerToken: process.env.DODO_API_KEY!,
+    environment: (process.env.DODO_ENVIRONMENT as "live_mode" | "test_mode") || "live_mode",
+  });
+}
 
 export async function POST(req: NextRequest) {
+  const dodo = getDodo();
   console.log("=== WEBHOOK HIT ===");
 
   try {

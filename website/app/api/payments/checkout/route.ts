@@ -3,9 +3,11 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CREDIT_PACKS } from "@/lib/credits";
 
-const DODO_API_URL = process.env.DODO_ENVIRONMENT === "test_mode"
-  ? "https://test.dodopayments.com"
-  : "https://api.dodopayments.com";
+function getDodoUrl() {
+  return process.env.DODO_ENVIRONMENT === "test_mode"
+    ? "https://test.dodopayments.com"
+    : "https://api.dodopayments.com";
+}
 
 export async function POST(req: NextRequest) {
   const user = await getAuthUser(req.headers);
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
       body.customer = { customer_id: user.dodoCustId };
     }
 
-    const res = await fetch(`${DODO_API_URL}/payments`, {
+    const res = await fetch(`${getDodoUrl()}/payments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       console.error("Dodo payment error:", data);
-      console.error("Dodo debug:", { url: `${DODO_API_URL}/payments`, env: process.env.DODO_ENVIRONMENT, productId: pack.productId, keyPrefix: process.env.DODO_API_KEY?.substring(0, 10) });
+      console.error("Dodo debug:", { url: `${getDodoUrl()}/payments`, env: process.env.DODO_ENVIRONMENT, productId: pack.productId, keyPrefix: process.env.DODO_API_KEY?.substring(0, 10) });
       return NextResponse.json({ error: data.message || "Payment creation failed" }, { status: 500 });
     }
 
