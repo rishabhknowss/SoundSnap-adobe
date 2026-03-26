@@ -6,7 +6,7 @@ import { CREDIT_PACKS } from "@/lib/credits";
 function getDodoUrl() {
   return process.env.DODO_ENVIRONMENT === "test_mode"
     ? "https://test.dodopayments.com"
-    : "https://api.dodopayments.com";
+    : "https://live.dodopayments.com";
 }
 
 export async function POST(req: NextRequest) {
