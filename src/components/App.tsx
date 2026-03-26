@@ -249,9 +249,14 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
             {/* Upload Video */}
             <div className="card">
               <FieldLabel>Upload Video</FieldLabel>
-              <div className="upload-area" onClick={() => !isGenerating && fileInputRef.current?.click()}>
+              <div className="upload-area" onClick={() => !isGenerating && !videoPreviewUrl && fileInputRef.current?.click()}>
                 {videoPreviewUrl ? (
-                  <video src={videoPreviewUrl} className="upload-preview" muted />
+                  <div className="upload-preview-wrap">
+                    <video src={videoPreviewUrl} className="upload-preview" muted />
+                    {!isGenerating && (
+                      <button className="remove-video" onClick={(e) => { e.stopPropagation(); setVideoFile(null); setVideoPreviewUrl(null); setVideoDuration(0); setError(""); if (fileInputRef.current) fileInputRef.current.value = "" }}>✕</button>
+                    )}
+                  </div>
                 ) : (
                   <div className="upload-placeholder">
                     <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>

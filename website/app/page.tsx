@@ -139,6 +139,7 @@ function AuthCard() {
       {/* Branding */}
       <div className="text-center mb-8">
         <span className="font-bold text-lg tracking-tight">soundsnap.</span>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">ai audio for your videos</p>
       </div>
 
       {message && <div className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-lg p-2.5 text-center mb-3">{message}</div>}
