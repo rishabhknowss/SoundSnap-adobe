@@ -40,8 +40,16 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
   const [showActivateInput, setShowActivateInput] = useState(false)
   const [lastCreditsUsed, setLastCreditsUsed] = useState<number | null>(null)
   const pollRef = useRef<any>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const isLinked = status === "linked"
+
+  const handleCancel = () => {
+    if (abortRef.current) { abortRef.current.abort(); abortRef.current = null }
+    setIsGenerating(false)
+    setProgress("")
+    setError("Generation cancelled. No credits were deducted.")
+  }
 
   const startCreditPoll = () => {
     if (pollRef.current) clearInterval(pollRef.current)
@@ -99,6 +107,9 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
       return
     }
 
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setIsGenerating(true); setError(""); setGeneratedVideoUrl(null); setAddedToCanvas(false); setShowBuyPrompt(false); setLastCreditsUsed(null)
 
     try {
@@ -110,7 +121,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
       if (!uploadRes.ok) { const d = await uploadRes.json(); throw new Error(d.error || "Upload failed") }
       const { videoUrl } = await uploadRes.json()
 
-      setProgress("Generating audio (this may take 30-60s)...")
+      setProgress("Generating audio — this may take 1–2 minutes...")
       const res = await apiFetch("/api/generate-audio", {
         method: "POST",
         body: JSON.stringify({
@@ -118,6 +129,7 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
           videoDuration: videoDuration || undefined,
           prompt: prompt.trim() || "Generate ambient background sound that fits the video's content",
         }),
+        signal: controller.signal,
       })
 
       if (res.status === 402) { setShowBuyPrompt(true); return }
@@ -129,8 +141,9 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
       refreshCredits()
       setProgress("")
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return
       setError(err instanceof Error ? err.message : "Failed to generate"); setProgress("")
-    } finally { setIsGenerating(false) }
+    } finally { setIsGenerating(false); abortRef.current = null }
   }
 
   const addToCanvas = async () => {
@@ -293,10 +306,11 @@ const App: React.FC<AppProps> = ({ addOnUISdk }) => {
             {isGenerating && (
               <div className="card generating-card">
                 <ProgressCircle indeterminate size="m" label="Generating" />
-                <div>
+                <div className="generating-info">
                   <p className="generating-title">{progress || "Generating..."}</p>
-                  <p className="generating-desc">This usually takes 30-60 seconds</p>
+                  <p className="generating-desc">This may take 1–2 minutes depending on video length</p>
                 </div>
+                <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
               </div>
             )}
 

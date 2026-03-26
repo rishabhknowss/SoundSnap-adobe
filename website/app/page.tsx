@@ -180,13 +180,6 @@ function AuthCard() {
         </TabsContent>
       </Tabs>
 
-      {/* Adobe badge */}
-      <div className="flex justify-center mt-6">
-        <div className="inline-flex items-center gap-2 bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06] rounded-full px-3.5 py-1.5">
-          <img src="/adobe-express.png" alt="Adobe Express" className="w-4 h-4" />
-          <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Adobe Express Add-on</span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -304,20 +297,22 @@ export default function LandingPage() {
               className="rounded-2xl border border-zinc-200/60 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 text-center overflow-hidden"
             >
               <div className="h-36 flex items-center justify-center mb-5">
-                <motion.div
-                  className="relative"
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <img src="/adobe-express.png" alt="Adobe Express" className="w-16 h-16 drop-shadow-md" />
+                <div className="relative">
                   <motion.div
-                    className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-sm"
+                    className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/15 flex items-center justify-center"
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <svg className="w-7 h-7 text-emerald-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                  </motion.div>
+                  <motion.div
+                    className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shadow-sm"
                     animate={{ scale: [0.8, 1, 0.8] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                   </motion.div>
-                </motion.div>
+                </div>
               </div>
               <div className="text-4xl font-extrabold text-zinc-200 dark:text-zinc-700 mb-1">3</div>
               <h3 className="font-bold text-base mb-1">Export</h3>

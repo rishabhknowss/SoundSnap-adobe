@@ -1,5 +1,5 @@
 * { box-sizing: border-box; }
-body { margin: 0; padding: 0; overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; }
+body { margin: 0; padding: 0; overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; }
 sp-theme { height: 100vh; }
 sp-textfield, sp-textarea, sp-picker { width: 100%; }
 sp-textarea { min-height: 60px; }
@@ -53,9 +53,12 @@ sp-textarea { min-height: 60px; }
 .buy-btn:hover { background: #334155; }
 
 /* ===== GENERATING ===== */
-.generating-card { display: flex; align-items: center; gap: 14px; background: #f5f3ff; border-color: #c4b5fd; }
+.generating-card { display: flex; align-items: center; gap: 12px; background: #f5f3ff; border-color: #c4b5fd; }
+.generating-info { flex: 1; }
 .generating-title { font-size: 13px; font-weight: 600; color: #6d28d9; margin: 0; }
 .generating-desc { font-size: 11px; color: #6b7280; margin: 2px 0 0; }
+.cancel-btn { background: none; border: 1px solid #fca5a5; color: #dc2626; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.cancel-btn:hover { background: #fef2f2; border-color: #dc2626; }
 
 /* ===== ERROR ===== */
 .error-card { background: #fef2f2; border-color: #fecaca; }
