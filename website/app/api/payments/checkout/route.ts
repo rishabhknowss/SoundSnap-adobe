@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       console.error("Dodo payment error:", data);
+      console.error("Dodo debug:", { url: `${DODO_API_URL}/payments`, env: process.env.DODO_ENVIRONMENT, productId: pack.productId, keyPrefix: process.env.DODO_API_KEY?.substring(0, 10) });
       return NextResponse.json({ error: data.message || "Payment creation failed" }, { status: 500 });
     }
 
